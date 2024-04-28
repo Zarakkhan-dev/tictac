@@ -4,10 +4,14 @@ const Interface = () => {
   const [turn, setturn] = useState("");
   const [check, updatecheck] = useState([1, 2, 3, 4, 5, 6, 7, 8, 9]);
   const [symbol, setsymbol] = useState(["", "", "", "", "", "", "", "", ""]);
+  const [status, updateStatus] = useState("First Move is X");
   const handler = (block) => {
     if (block === check[block]) {
       return;
     } else {
+      if (checkWinner() === "X" || checkWinner === "O") {
+        return;
+      }
       const updatelist = [...check];
       updatelist[block] = block;
       updatecheck(updatelist);
@@ -18,17 +22,44 @@ const Interface = () => {
         setturn("circle");
       } else {
         const updatesymbol = [...symbol];
-        updatesymbol[block] ="X";
+        updatesymbol[block] = "X";
         setsymbol(updatesymbol);
         setturn("cross");
       }
     }
   };
-  useEffect(()=>{
-    console.log(symbol)
-  })
+  const checkWinner = () => {
+    for (let i = 0; i < possible_matching.length; i++) {
+      const [a, b, c] = possible_matching[i];
+      if (
+        symbol[a] !== "" &&
+        symbol[a] === symbol[b] &&
+        symbol[a] === symbol[c]
+      ) {
+        return symbol[a];
+      }
+    }
+    return null;
+  };
+
+  useEffect(() => {
+    if (checkWinner() === "X" || checkWinner === "O") {
+      const result = `Winner is ${checkWinner()}`;
+
+      updateStatus(result);
+      return;
+    } else {
+      turn === ""
+        ? ""
+        : turn === "circle"
+        ? updateStatus("next move is 'X'")
+        : updateStatus("next move is 'O'");
+    }
+  });
   return (
     <>
+      {" "}
+      <div className="text-center">{status}</div>
       <div className="tictac-interface">
         <div class="block-1" onClick={() => handler(0)}>
           <i
